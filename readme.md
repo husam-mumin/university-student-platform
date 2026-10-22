@@ -47,7 +47,7 @@ flowchart LR
     A[Admin Dashboard<br/>React + MUI] -->|REST / JWT| API
     FD[Faculty Dashboard<br/>React + MUI] -->|REST / JWT| API
     S[Student App<br/>Flutter] -->|REST / JWT| API
-    API[NestJS API<br/>URI-versioned] --> P[(Prisma ORM<br/>Database)]
+    API[NestJS API<br/>URI-versioned] --> P[(Prisma ORM<br/> PostgreSQL Database)]
     API --> R[(Redis cache)]
     API --> F[Firebase<br/>Cloud Messaging]
     F -.push.-> A
@@ -59,7 +59,7 @@ flowchart LR
 
 ## Backend
 
-A **NestJS** modular monolith with **Prisma ORM**, **Redis** caching, and **Zod**-validated DTOs.
+A **NestJS** modular monolith with **PostgreSQL Prisma(ORM)**, **Redis** caching, and **Zod**-validated DTOs.
 
 ### Architecture
 
@@ -223,7 +223,7 @@ flowchart LR
 
 | Layer | Technologies |
 |-------|--------------|
-| **Backend** | NestJS · TypeScript · Prisma · Redis · Zod · JWT · Firebase Cloud Messaging |
+| **Backend** | NestJS · TypeScript · PostgreSQL (Prisma) · Redis · Zod · JWT · Firebase Cloud Messaging |
 | **Admin Dashboard** | React · Vite · TypeScript · MUI · pnpm · Firebase |
 | **Faculty Dashboard** | React · Vite · TypeScript · MUI · pnpm · Firebase |
 | **Student App** | Flutter · Dart · Dio · GoRouter · get_it |
