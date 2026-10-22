@@ -180,17 +180,31 @@ Exam management with controlled **result publishing**, so results become visible
 
 ```mermaid
 flowchart LR
-    G[Push to GitHub] --> CI[GitHub Actions]
-    CI --> B[Build Docker image]
-    B --> R[Push to container registry]
+    G[Push to main] --> T[Build + tests]
+    T --> B[Build image<br/>tagged with commit SHA]
+    B --> R[Push to registry]
     R --> S[SSH to server]
-    S --> D[docker compose pull<br/>&& up -d]
+    S --> M[Prisma migrate deploy]
+    M --> U[docker compose up -d]
+    U --> H{Health check}
+    H -->|pass| OK[Record release]
+    H -->|fail| RB[Roll back to previous image<br/>and fail the run]
 ```
 
 - **Containerized services** with Docker, and Docker Compose for the backend services including Redis.
 - **Multi-stage builds**: build tooling stays out of the final image, which is a slim nginx image serving static assets.
 - **GitHub Actions CI/CD**: build, push to a container registry, and deploy over SSH with no manual steps.
 - **Environment-based configuration**: runtime env for the API, and build-time or compile-time variables for the frontends.
+
+### Safe Deployments
+
+- **Gated releases**: the deploy runs only on `main`, after build and tests pass, and a concurrency lock prevents overlapping deploys.
+- **SHA-tagged images**: rolling back means redeploying the previous tag.
+- **Automatic rollback**: a post-deploy health check restores the previous image if the API never becomes healthy, and the run fails so the team is notified.
+- **Safe migrations**: `prisma migrate deploy` runs as its own step before the swap, and schema changes are backward-compatible because a rollback cannot undo a migration.
+- **Fail-fast config**: environment variables are validated with Zod at startup, so a bad value stops the container immediately.
+
+<!-- Keep only the bullets that are actually implemented in your pipeline. -->
 
 ---
 
